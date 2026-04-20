@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>상담사 찾기 - 대출상담사 바로찾기</title><link rel="stylesheet" href="style.css"/><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/></head><body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top"><div class="container"><a class="navbar-brand d-flex align-items-center" href="index.html"><div class="logo-icon me-2"><i class="fas fa-hand-holding-usd"></i></div><span class="logo-text">대출상담사<br/><strong>바로찾기</strong></span></a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="nav"><ul class="navbar-nav ms-auto align-items-center"><li class="nav-item"><a class="nav-link fw-bold text-primary" href="find.html">상담사 찾기</a></li><li class="nav-item"><a class="nav-link" href="rates.html">금리현황표</a></li><li class="nav-item"><a class="nav-link" href="calc.html">대출 계산기</a></li><li class="nav-item"><a class="nav-link" href="about.html">서비스 소개</a></li><li class="nav-item ms-2"><a class="btn btn-primary-custom px-4" href="find.html">상담사 찾기 →</a></li></ul></div></div></nav>
+<div class="find-hero"><div class="container text-center"><h2 class="fw-bold mb-2"><i class="fas fa-search me-2"></i>대출상담사 찾기</h2><p class="opacity-75">지역과 금융사를 선택하면 담당 대출상담사를 바로 확인하세요</p></div></div>
+<div class="container my-4">
+<div class="row g-4">
+<div class="col-lg-4">
+<div class="search-box">
+<h6 class="fw-bold mb-3"><i class="fas fa-map-marker-alt text-primary me-2"></i>지역 선택</h6>
+<div class="region-grid">
+<div class="region-btn" onclick="sel(this,'서울')">서울</div><div class="region-btn" onclick="sel(this,'경기')">경기</div><div class="region-btn" onclick="sel(this,'인천')">인천</div><div class="region-btn" onclick="sel(this,'부산')">부산</div><div class="region-btn" onclick="sel(this,'대구')">대구</div><div class="region-btn" onclick="sel(this,'대전')">대전</div><div class="region-btn" onclick="sel(this,'광주')">광주</div><div class="region-btn" onclick="sel(this,'울산')">울산</div><div class="region-btn" onclick="sel(this,'세종')">세종</div><div class="region-btn" onclick="sel(this,'강원')">강원</div><div class="region-btn" onclick="sel(this,'충북')">충북</div><div class="region-btn" onclick="sel(this,'충남')">충남</div><div class="region-btn" onclick="sel(this,'전북')">전북</div><div class="region-btn" onclick="sel(this,'전남')">전남</div><div class="region-btn" onclick="sel(this,'경북')">경북</div><div class="region-btn" onclick="sel(this,'경남')">경남</div><div class="region-btn" onclick="sel(this,'제주')">제주</div>
+</div>
+<h6 class="fw-bold mt-4 mb-2"><i class="fas fa-university text-primary me-2"></i>금융사 유형</h6>
+<div class="fin-type-btns">
+<div class="fin-btn active" onclick="selFin(this,'전체')">전체</div><div class="fin-btn" onclick="selFin(this,'은행')">은행</div><div class="fin-btn" onclick="selFin(this,'보험사')">보험사</div><div class="fin-btn" onclick="selFin(this,'저축은행')">저축은행</div><div class="fin-btn" onclick="selFin(this,'캐피탈')">캐피탈</div><div class="fin-btn" onclick="selFin(this,'협동조합')">협동조합</div>
+</div>
+<button class="btn btn-primary-custom w-100 mt-4" onclick="search()"><i class="fas fa-search me-2"></i>상담사 검색</button>
+</div>
+</div>
+<div class="col-lg-8">
+<div class="d-flex justify-content-between align-items-center mb-3"><h6 class="fw-bold mb-0" id="rtitle">지역과 금융사를 선택 후 검색하세요</h6><span class="badge bg-primary" id="rcnt"></span></div>
+<div id="list" class="row g-3"><div class="col-12 text-center py-5 text-muted"><i class="fas fa-search fa-3x mb-3 d-block opacity-25"></i>왼쪽에서 지역과 금융사를 선택 후 검색하세요.</div></div>
+</div>
+</div>
+</div>
+<footer class="footer py-4 mt-5"><div class="container text-center"><p class="small mb-0" style="color:#aaa">© 2026. 대출상담사 바로찾기 All rights reserved.</p></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let rg='',fn='전체';
+const data=[
+{n:'김민준',r:'서울',d:'강남구',f:'국민은행',t:'은행',p:'010-1234-5678',c:'KB20241001',y:'15년',spec:'아파트담보,주택전세',intro:'대출은 비교가 답입니다. 여러 은행 상품을 한번에 비교해 드립니다.'},
+{n:'이수진',r:'서울',d:'서초구',f:'신한은행',t:'은행',p:'010-2345-6789',c:'SH20231205',y:'8년',spec:'주담대,전세대출',intro:'고객 맞춤형 대출 솔루션을 제공합니다.'},
+{n:'박성호',r:'서울',d:'마포구',f:'하나은행',t:'은행',p:'010-3456-7890',c:'HA20220815',y:'12년',spec:'아파트,오피스텔',intro:'최저금리 상품 안내 전문 상담사입니다.'},
+{n:'최지영',r:'서울',d:'송파구',f:'삼성생명',t:'보험사',p:'010-4567-8901',c:'SS20210301',y:'10년',spec:'보험사대출,주담대',intro:'보험사 최저금리 상품 전문가입니다.'},
+{n:'노은별',r:'서울',d:'종로구',f:'롯데캐피탈',t:'캐피탈',p:'010-2233-4455',c:'LC20241001',y:'4년',spec:'캐피탈,신용대출',intro:'빠른 심사와 친절한 상담으로 모십니다.'},
+{n:'정대현',r:'경기',d:'수원시',f:'우리은행',t:'은행',p:'010-5678-9012',c:'WO20230701',y:'7년',spec:'주담대,신용대출',intro:'수원 지역 최다 실적 상담사입니다.'},
+{n:'한소희',r:'경기',d:'성남시',f:'NH농협',t:'협동조합',p:'010-6789-0123',c:'NH20220401',y:'9년',spec:'농협주담대,전세',intro:'농협 대출 전문 상담사입니다.'},
+{n:'오민석',r:'경기',d:'고양시',f:'OK저축은행',t:'저축은행',p:'010-7890-1234',c:'OK20241101',y:'5년',spec:'저축은행대출',intro:'2금융권 전문 상담사입니다.'},
+{n:'윤지훈',r:'경기',d:'용인시',f:'현대캐피탈',t:'캐피탈',p:'010-8901-2345',c:'HC20230901',y:'6년',spec:'캐피탈,할부',intro:'현대캐피탈 전담 상담사입니다.'},
+{n:'강미래',r:'인천',d:'남동구',f:'기업은행',t:'은행',p:'010-9012-3456',c:'IB20210601',y:'11년',spec:'기업,개인대출',intro:'인천 지역 최고 상담사를 만나보세요.'},
+{n:'서준혁',r:'부산',d:'해운대구',f:'부산은행',t:'은행',p:'010-0123-4567',c:'BS20220201',y:'14년',spec:'지방은행,주담대',intro:'부산 해운대 지역 전문 상담사입니다.'},
+{n:'임채원',r:'대구',d:'수성구',f:'대구은행',t:'은행',p:'010-1122-3344',c:'DG20230501',y:'9년',spec:'지방은행,아파트',intro:'대구 수성구 전문 상담사입니다.'},
+];
+function sel(el,r){document.querySelectorAll('.region-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');rg=r;}
+function selFin(el,f){document.querySelectorAll('.fin-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');fn=f;}
+function search(){
+  if(!rg){alert('지역을 선택해주세요.');return;}
+  let d=data.filter(c=>c.r===rg);
+  if(fn!=='전체')d=d.filter(c=>c.t===fn);
+  document.getElementById('rtitle').textContent=rg+' 대출상담사 검색 결과';
+  document.getElementById('rcnt').textContent=d.length+'명';
+  if(!d.length){document.getElementById('list').innerHTML='<div class="col-12 text-center py-5 text-muted"><i class="fas fa-user-slash fa-3x mb-3 d-block opacity-25"></i>해당 조건의 상담사 정보가 없습니다.</div>';return;}
+  document.getElementById('list').innerHTML=d.map(c=>`
+<div class="col-md-6">
+<div class="consultant-card">
+<div class="d-flex justify-content-between align-items-start mb-2">
+<div><span class="consultant-name">${c.n}</span><span class="consultant-badge ms-2">${c.t}</span></div>
+<button class="btn-call btn" onclick="alert('연락처: ${c.p}\n실제 서비스에서는 전화 연결됩니다.')"><i class="fas fa-phone me-1"></i>연락하기</button>
+</div>
+<div class="consultant-info">
+<div><i class="fas fa-university me-2 text-primary"></i>${c.f}</div>
+<div><i class="fas fa-map-marker-alt me-2 text-primary"></i>${c.r} ${c.d}</div>
+<div><i class="fas fa-id-card me-2 text-primary"></i>등록번호: ${c.c}</div>
+<div><i class="fas fa-clock me-2 text-primary"></i>경력: ${c.y} | 전문: ${c.spec}</div>
+<div class="mt-2 p-2 bg-light rounded small text-muted">"<em>${c.intro}</em>"</div>
+</div>
+<div class="mt-2"><small class="text-muted"><i class="fas fa-exclamation-circle me-1 text-warning"></i>상담 전 은행연합회에서 신원 확인을 권장합니다.</small></div>
+<div class="mt-2 business-card" style="font-size:.82rem;padding:14px">
+<div class="fw-bold fs-6">${c.n} 상담사</div>
+<div class="opacity-75">${c.f} | ${c.r} ${c.d}</div>
+<div class="mt-1"><i class="fas fa-phone me-1"></i>${c.p} &nbsp;|&nbsp; 등록: ${c.c}</div>
+<div class="opacity-60 small mt-1">경력 ${c.y} | ${c.spec}</div>
+</div>
+</div>
+</div>`).join('');
+}
+</script></body></html>
