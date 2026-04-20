@@ -1,251 +1,1051 @@
-<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>대출 계산기 - 대출상담사 바로찾기</title><link rel="stylesheet" href="style.css"/><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/></head><body>
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top"><div class="container"><a class="navbar-brand d-flex align-items-center" href="index.html"><div class="logo-icon me-2"><i class="fas fa-hand-holding-usd"></i></div><span class="logo-text">대출상담사<br/><strong>바로찾기</strong></span></a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="nav"><ul class="navbar-nav ms-auto align-items-center"><li class="nav-item"><a class="nav-link" href="find.html">상담사 찾기</a></li><li class="nav-item"><a class="nav-link" href="rates.html">금리현황표</a></li><li class="nav-item"><a class="nav-link fw-bold text-primary" href="calc.html">대출 계산기</a></li><li class="nav-item"><a class="nav-link" href="about.html">서비스 소개</a></li><li class="nav-item ms-2"><a class="btn btn-primary-custom px-4" href="find.html">상담사 찾기 →</a></li></ul></div></div></nav>
-<div class="calc-hero"><div class="container text-center"><h2 class="fw-bold mb-2"><i class="fas fa-calculator me-2"></i>대출 계산기</h2><p class="opacity-75">정밀 DSR 계산기 및 월납입금, 인지세, 중도상환수수료 계산기</p></div></div>
-<div class="container my-4">
-<div class="calc-tabs">
-<button class="calc-tab-btn active" onclick="show('monthly',this)">월납입금</button>
-<button class="calc-tab-btn" onclick="show('dsr',this)">DSR 계산기</button>
-<button class="calc-tab-btn" onclick="show('stamp',this)">인지세/채권</button>
-<button class="calc-tab-btn" onclick="show('prepay',this)">중도상환수수료</button>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>대출·세금 계산기 - 대출상담사 바로찾기</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+:root{--primary:#1a56db;--primary-dark:#1342b0;--accent:#f59e0b;--bg:#f0f4ff;--text:#1e293b;--border:#e2e8f0}
+body{font-family:'Noto Sans KR',sans-serif;background:#f8fafc;color:var(--text)}
+.topnav{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:999;padding:0 1rem}
+.topnav .inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo .logo-box{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),#6366f1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
+.nav-logo .logo-txt{font-size:16px;font-weight:700;color:var(--text);line-height:1.2}
+.nav-logo .logo-txt span{color:var(--primary)}
+.nav-menu{display:flex;align-items:center;gap:4px;list-style:none;margin:0;padding:0}
+.nav-menu a{text-decoration:none;color:#475569;font-size:14px;padding:8px 14px;border-radius:8px;transition:.2s}
+.nav-menu a:hover,.nav-menu a.active{background:var(--bg);color:var(--primary)}
+.nav-menu .btn-cta{background:var(--primary);color:#fff;padding:8px 20px;border-radius:8px;font-weight:600}
+.page-hero{background:linear-gradient(135deg,#0f172a,#1a56db);padding:40px 1rem;color:#fff;text-align:center}
+.page-hero h1{font-size:28px;font-weight:800;margin-bottom:8px}
+.page-hero p{color:rgba(255,255,255,.75);font-size:15px}
+.calc-nav{background:#fff;border-bottom:2px solid var(--border);padding:0 1rem;position:sticky;top:64px;z-index:98;overflow-x:auto}
+.calc-nav .inner{max-width:1100px;margin:0 auto;display:flex;gap:4px;padding:8px 0}
+.calc-nav-btn{border:none;background:transparent;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;color:#64748b;cursor:pointer;white-space:nowrap;transition:.2s;display:flex;align-items:center;gap:6px}
+.calc-nav-btn:hover,.calc-nav-btn.active{background:var(--bg);color:var(--primary)}
+.calc-nav-btn.active{border-bottom:2px solid var(--primary);border-radius:8px 8px 0 0}
+.calc-section{display:none;padding:32px 1rem;max-width:900px;margin:0 auto}
+.calc-section.active{display:block}
+.calc-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px}
+.calc-card h4{font-size:18px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+label{font-size:14px;font-weight:600;color:#374151;margin-bottom:6px;display:block}
+.form-control,.form-select{border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:14px;transition:.2s}
+.form-control:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,86,219,.1);outline:none}
+.hint{font-size:12px;color:#94a3b8;margin-top:4px}
+.btn-calc{background:var(--primary);color:#fff;border:none;padding:12px 28px;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;width:100%;transition:.2s}
+.btn-calc:hover{background:var(--primary-dark)}
+.result-box{background:linear-gradient(135deg,var(--bg),#e0e7ff);border:1px solid #c7d2fe;border-radius:12px;padding:20px;margin-top:20px}
+.result-main{text-align:center;margin-bottom:16px}
+.result-main .label{font-size:14px;color:#64748b;margin-bottom:4px}
+.result-main .value{font-size:36px;font-weight:800;color:var(--primary)}
+.detail-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+.detail-table th{background:#f1f5f9;padding:10px 14px;text-align:left;font-weight:700;font-size:13px;color:#475569}
+.detail-table td{padding:10px 14px;border-bottom:1px solid #f1f5f9}
+.detail-table tr:last-child td{border-bottom:none}
+.detail-table tr.loan-header td{background:#eff6ff;font-weight:700;color:var(--primary)}
+.detail-table tr.total-row td{background:#fef3c7;font-weight:800;font-size:15px}
+.detail-table tr.dsr-row td{background:var(--primary);color:#fff;font-weight:800;font-size:16px}
+.dsr-gauge{background:#e2e8f0;border-radius:99px;height:12px;overflow:hidden;margin:8px 0}
+.dsr-gauge-fill{height:100%;border-radius:99px;transition:.5s}
+.badge-ok{background:#dcfce7;color:#166534;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.badge-warn{background:#fef9c3;color:#854d0e;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.badge-over{background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.loan-entry{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;position:relative}
+.loan-entry-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.loan-entry-header .loan-num{font-weight:700;color:var(--primary);font-size:15px}
+.btn-remove{background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer}
+.btn-add-loan{border:2px dashed #cbd5e1;background:transparent;color:#64748b;padding:12px;border-radius:10px;width:100%;cursor:pointer;font-size:14px;font-weight:600;transition:.2s;margin-bottom:20px}
+.btn-add-loan:hover{border-color:var(--primary);color:var(--primary);background:var(--bg)}
+.info-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px 16px;font-size:13px;color:#1e40af;margin-bottom:20px;line-height:1.7}
+.info-box strong{color:#1a56db}
+.tax-result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:16px}
+.tax-result-item{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.tax-result-item .tlabel{font-size:12px;color:#64748b;margin-bottom:4px}
+.tax-result-item .tval{font-size:20px;font-weight:800;color:var(--text)}
+.section-divider{border-top:2px solid var(--border);margin:32px 0}
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <div class="inner">
+    <a class="nav-logo" href="index.html">
+      <div class="logo-box"><i class="fas fa-home"></i></div>
+      <div class="logo-txt">대출상담사<br/><span>바로찾기</span></div>
+    </a>
+    <ul class="nav-menu">
+      <li><a href="find.html"><i class="fas fa-search me-1"></i>상담사 찾기</a></li>
+      <li><a href="rates.html"><i class="fas fa-percent me-1"></i>금리현황</a></li>
+      <li><a href="calc.html" class="active"><i class="fas fa-calculator me-1"></i>계산기</a></li>
+      <li><a href="about.html">서비스 소개</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1><i class="fas fa-calculator me-2"></i>대출·세금 계산기</h1>
+  <p>DSR · 취득세 · 보유세 · 양도세 · 상속증여세 · 법무수수료 계산 (2026년 기준)</p>
 </div>
 
-<!-- 월납입금 -->
-<div id="calc-monthly" class="col-lg-8 mx-auto">
-<div class="calc-card">
-<h5 class="fw-bold mb-4"><i class="fas fa-money-bill-wave text-primary me-2"></i>월납입금 계산기</h5>
-<div class="row g-3">
-<div class="col-md-6"><label class="form-label">대출금액 (만원)</label><div class="input-group"><input type="number" class="form-control" id="m_amt" value="30000"/><span class="input-group-text">만원</span></div></div>
-<div class="col-md-6"><label class="form-label">연이율 (%)</label><div class="input-group"><input type="number" class="form-control" id="m_rate" value="3.5" step="0.01"/><span class="input-group-text">%</span></div></div>
-<div class="col-md-6"><label class="form-label">대출기간 (년)</label><div class="input-group"><input type="number" class="form-control" id="m_yr" value="30"/><span class="input-group-text">년</span></div></div>
-<div class="col-md-6"><label class="form-label">상환방식</label><select class="form-select" id="m_tp"><option value="equal">원리금균등</option><option value="principal">원금균등</option><option value="bullet">만기일시</option></select></div>
+<div class="calc-nav">
+  <div class="inner">
+    <button class="calc-nav-btn active" onclick="showTab('dsr',this)"><i class="fas fa-percentage"></i>DSR 계산</button>
+    <button class="calc-nav-btn" onclick="showTab('monthly',this)"><i class="fas fa-coins"></i>월납입금</button>
+    <button class="calc-nav-btn" onclick="showTab('acquitax',this)"><i class="fas fa-file-invoice-dollar"></i>취득세</button>
+    <button class="calc-nav-btn" onclick="showTab('holdtax',this)"><i class="fas fa-home"></i>보유세</button>
+    <button class="calc-nav-btn" onclick="showTab('transfertax',this)"><i class="fas fa-exchange-alt"></i>양도소득세</button>
+    <button class="calc-nav-btn" onclick="showTab('gifttax',this)"><i class="fas fa-gift"></i>상속·증여세</button>
+    <button class="calc-nav-btn" onclick="showTab('legaltax',this)"><i class="fas fa-balance-scale"></i>법무수수료</button>
+    <button class="calc-nav-btn" onclick="showTab('stamp',this)"><i class="fas fa-stamp"></i>인지세·채권</button>
+  </div>
 </div>
-<button class="btn btn-primary-custom w-100 mt-4" onclick="calcM()">계산하기</button>
-<div id="m_res" class="calc-result d-none mt-4">
-<div class="calc-result-label mb-1">월 납입금</div><div class="calc-result-num" id="m_rn"></div>
-<hr style="border-color:rgba(255,255,255,.3)"/>
-<div class="row text-start small" id="m_rd"></div>
-</div>
-</div>
-</div>
-
-<!-- DSR 정밀 계산기 -->
-<div id="calc-dsr" class="col-lg-10 mx-auto d-none">
-<div class="calc-card">
-<h5 class="fw-bold mb-2"><i class="fas fa-percentage text-primary me-2"></i>DSR (총부채원리금상환비율) 정밀 계산기</h5>
-<div class="alert alert-info small mb-4">
-<strong>DSR이란?</strong> 모든 대출의 원리금 상환 부담을 연소득 대비 비율로 계산합니다.<br/>
-<strong>기준:</strong> 제1금융권(은행) <span class="text-danger fw-bold">40%</span> 이하 | 제2금융권(저축은행·캐피탈) <span class="text-warning fw-bold">50%</span> 이하<br/>
-<strong>스트레스금리(2025.12.31 기준):</strong> 수도권 주담대 3.0% | 지방 주담대 0.75% | 일반 1.5%
-</div>
-<div class="row g-3 mb-4">
-<div class="col-md-4"><label class="form-label">연간 소득 (만원) <span class="text-danger">*</span></label><div class="input-group"><input type="number" class="form-control" id="d_inc" placeholder="예: 6000"/><span class="input-group-text">만원</span></div><small class="text-muted">근로소득, 사업소득, 연금 등 합산</small></div>
-<div class="col-md-4"><label class="form-label">금융권 구분</label><select class="form-select" id="d_tier"><option value="1st">제1금융권 (은행, 기준: 40%)</option><option value="2nd">제2금융권 (저축은행·캐피탈, 기준: 50%)</option></select></div>
-<div class="col-md-4"><label class="form-label">지역 구분 (주담대 스트레스금리)</label><select class="form-select" id="d_area"><option value="metro">수도권 (스트레스금리 3.0%)</option><option value="local">지방 (스트레스금리 0.75%)</option><option value="none">해당없음 (스트레스금리 미적용)</option></select></div>
-</div>
-<h6 class="fw-bold mb-3"><i class="fas fa-plus-circle text-primary me-2"></i>대출 목록 입력 <small class="text-muted fw-normal">(본건 포함 모든 대출 입력)</small></h6>
-<div id="d_loans">
-<div class="dsr-loan-row" data-idx="0">
-<div class="row g-2 align-items-end">
-<div class="col-md-2"><label class="form-label">대출 종류</label><select class="form-select form-select-sm" name="ltype"><option value="apt">주택담보대출</option><option value="jungdo">중도금/이주비</option><option value="jeonse_loan">전세대출</option><option value="jeonse_deposit">전세보증금담보</option><option value="credit">신용대출</option><option value="non_housing">비주택담보</option><option value="other_collateral">기타담보</option><option value="card">장기카드대출</option><option value="other">기타대출</option></select></div>
-<div class="col-md-2"><label class="form-label">상환방식</label><select class="form-select form-select-sm" name="rtype"><option value="equal">원리금균등</option><option value="principal">원금균등</option><option value="bullet">만기일시</option><option value="increasing">체증식</option></select></div>
-<div class="col-md-2"><label class="form-label">대출잔액 (만원)</label><input type="number" class="form-control form-control-sm" name="remain" placeholder="잔액" value="30000"/></div>
-<div class="col-md-2"><label class="form-label">잔여기간 (개월)</label><input type="number" class="form-control form-control-sm" name="period" placeholder="개월" value="360"/></div>
-<div class="col-md-2"><label class="form-label">금리 (%)</label><input type="number" class="form-control form-control-sm" name="rate" placeholder="%" step="0.01" value="3.5"/></div>
-<div class="col-md-1"><label class="form-label">거치(개월)</label><input type="number" class="form-control form-control-sm" name="grace" placeholder="0" value="0"/></div>
-<div class="col-md-1 d-flex align-items-end"><button class="btn btn-sm btn-outline-danger w-100" onclick="removeLoan(this)">삭제</button></div>
-</div>
-</div>
-</div>
-<button class="btn btn-outline-primary mt-3 me-2" onclick="addLoan()"><i class="fas fa-plus me-1"></i>대출 추가</button>
-<button class="btn btn-primary-custom mt-3" onclick="calcDSR()"><i class="fas fa-calculator me-2"></i>DSR 계산</button>
-<div id="d_res" class="mt-4 d-none">
-<div class="row g-3">
-<div class="col-md-4">
-<div class="calc-result text-center">
-<div class="calc-result-label mb-1">내 DSR 비율</div>
-<div class="calc-result-num" id="d_pct"></div>
-<div class="mt-1 small" id="d_limit"></div>
-</div>
-</div>
-<div class="col-md-8">
-<div class="calc-card py-3">
-<div class="dsr-result-bar"><div class="dsr-result-fill" id="d_bar"></div></div>
-<div class="row text-center mt-3">
-<div class="col-4"><div class="small text-muted">연소득</div><div class="fw-bold" id="d_inc_show"></div></div>
-<div class="col-4"><div class="small text-muted">연간 총상환액</div><div class="fw-bold text-danger" id="d_annual"></div></div>
-<div class="col-4"><div class="small text-muted">대출 가능 한도</div><div class="fw-bold text-primary" id="d_possible"></div></div>
-</div>
-<div class="mt-3 p-2 rounded small" id="d_msg"></div>
-<div class="mt-2" id="d_detail"></div>
-</div>
-</div>
-</div>
-</div>
-<div class="mt-4 p-3 bg-light rounded small text-muted">
-<strong>대출 종류별 DSR 원금 산정 기준 (금융감독원 규정)</strong><br/>
-주담대(분할상환): 실제 원리금 | 중도금/이주비: 대출총액÷25년 | 전세대출: 미포함 | 전세보증금담보: 총액÷4년 | 신용대출(분할): 약정만기(5~10년) | 신용대출(기타): 총액÷5년 | 비주택담보: 총액÷8년 | 기타담보: 총액÷10년 | 장기카드대출(분할): 약정만기 | 기타대출: 향후1년 실상환액
-</div>
-</div>
+<!-- DSR TAB -->
+<div id="tab-dsr" class="calc-section active">
+  <div class="calc-card">
+    <h4><i class="fas fa-percentage" style="color:#1a56db"></i>DSR (총부채원리금상환비율) 정밀 계산기</h4>
+    <div class="info-box">
+      <strong>DSR이란?</strong> 연간 모든 대출 원리금 상환액을 연소득으로 나눈 비율<br/>
+      <strong>기준:</strong> 1금융권(은행) DSR ≤ 40% | 2금융권(저축은행·캐피탈) DSR ≤ 50%<br/>
+      <strong>스트레스금리 (2025.12.31기준):</strong> 수도권 +3.0% | 지방 +0.75% | 일반 +1.5%
+    </div>
+    <div class="row g-3 mb-3">
+      <div class="col-md-4">
+        <label>연소득 (만원) <span style="color:red">*</span></label>
+        <input type="number" class="form-control" id="d_income" placeholder="예: 7000" value="7000"/>
+        <div class="hint">세전 연봉 기준 (만원 입력)</div>
+      </div>
+      <div class="col-md-4">
+        <label>금융권 구분</label>
+        <select class="form-select" id="d_tier">
+          <option value="1st">제1금융권 (은행·기준: 40%)</option>
+          <option value="2nd">제2금융권 (저축·캐피탈·기준: 50%)</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label>지역 구분 (스트레스금리)</label>
+        <select class="form-select" id="d_area">
+          <option value="metro">수도권 (+3.0%)</option>
+          <option value="local">지방 (+0.75%)</option>
+          <option value="general">일반 (+1.5%)</option>
+        </select>
+      </div>
+    </div>
+    <h6 style="font-weight:700;margin-bottom:12px"><i class="fas fa-plus-circle" style="color:#1a56db"></i> 대출 목록 입력 <small style="color:#94a3b8;font-weight:400">(본건 포함 모든 대출 입력)</small></h6>
+    <div id="loan-list"></div>
+    <button class="btn-add-loan" onclick="addLoan()"><i class="fas fa-plus me-2"></i>대출 추가</button>
+    <button class="btn-calc" onclick="calcDSR()"><i class="fas fa-calculator me-2"></i>DSR 계산하기</button>
+    <div id="dsr-result" style="display:none"></div>
+  </div>
 </div>
 
-<!-- 인지세/채권 -->
-<div id="calc-stamp" class="col-lg-8 mx-auto d-none">
-<div class="calc-card">
-<h5 class="fw-bold mb-4"><i class="fas fa-stamp text-primary me-2"></i>인지세 / 채권할인비용 계산기</h5>
-<div class="row g-3">
-<div class="col-md-6"><label class="form-label">대출금액 (만원)</label><div class="input-group"><input type="number" class="form-control" id="s_amt" value="30000"/><span class="input-group-text">만원</span></div></div>
-<div class="col-md-6"><label class="form-label">대출 유형</label><select class="form-select" id="s_tp"><option value="apt">주택담보대출 (아파트)</option><option value="nonApt">주택담보대출 (비아파트)</option><option value="jeonse">전세자금대출</option></select></div>
-</div>
-<button class="btn btn-primary-custom w-100 mt-4" onclick="calcS()">계산하기</button>
-<div id="s_res" class="calc-result mt-4 d-none"><div class="row text-start" id="s_rd"></div></div>
-</div>
+<!-- MONTHLY TAB -->
+<div id="tab-monthly" class="calc-section">
+  <div class="calc-card">
+    <h4><i class="fas fa-coins" style="color:#16a34a"></i>월납입금 계산기</h4>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label>대출금액 (만원)</label>
+        <input type="number" class="form-control" id="m_amt" value="30000" placeholder="30000"/>
+      </div>
+      <div class="col-md-6">
+        <label>연이율 (%)</label>
+        <input type="number" class="form-control" id="m_rate" value="3.5" step="0.1"/>
+      </div>
+      <div class="col-md-6">
+        <label>대출기간 (년)</label>
+        <input type="number" class="form-control" id="m_yr" value="30"/>
+      </div>
+      <div class="col-md-6">
+        <label>상환방식</label>
+        <select class="form-select" id="m_tp">
+          <option value="equal">원리금균등</option>
+          <option value="principal">원금균등</option>
+          <option value="bullet">만기일시상환</option>
+          <option value="grace5">거치 5년 후 원리금균등</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-calc mt-4" onclick="calcMonthly()">계산하기</button>
+    <div id="monthly-result" style="margin-top:20px;display:none"></div>
+  </div>
 </div>
 
-<!-- 중도상환 -->
-<div id="calc-prepay" class="col-lg-8 mx-auto d-none">
-<div class="calc-card">
-<h5 class="fw-bold mb-4"><i class="fas fa-undo text-primary me-2"></i>중도상환 수수료 계산기</h5>
-<p class="text-muted small mb-3">대출 실행 후 3년 이내 상환 시 수수료가 발생합니다. (일반적으로 1~1.5%)</p>
-<div class="row g-3">
-<div class="col-md-6"><label class="form-label">대출 원금 (만원)</label><div class="input-group"><input type="number" class="form-control" id="p_total" value="30000"/><span class="input-group-text">만원</span></div></div>
-<div class="col-md-6"><label class="form-label">중도상환 금액 (만원)</label><div class="input-group"><input type="number" class="form-control" id="p_pay" value="10000"/><span class="input-group-text">만원</span></div></div>
-<div class="col-md-6"><label class="form-label">대출 경과 기간 (개월)</label><div class="input-group"><input type="number" class="form-control" id="p_mon" value="12"/><span class="input-group-text">개월</span></div></div>
-<div class="col-md-6"><label class="form-label">중도상환 수수료율 (%)</label><div class="input-group"><input type="number" class="form-control" id="p_rate" step="0.01" value="1.2"/><span class="input-group-text">%</span></div></div>
-</div>
-<button class="btn btn-primary-custom w-100 mt-4" onclick="calcP()">계산하기</button>
-<div id="p_res" class="calc-result mt-4 d-none"><div class="calc-result-label mb-1">중도상환 수수료 (예상)</div><div class="calc-result-num" id="p_rn"></div><div class="mt-2 small opacity-75" id="p_rd"></div></div>
-</div>
-</div>
+<!-- ACQUITAX TAB -->
+<div id="tab-acquitax" class="calc-section">
+  <div class="calc-card">
+    <h4><i class="fas fa-file-invoice-dollar" style="color:#ca8a04"></i>취득세 계산기 (2026년 기준)</h4>
+    <div class="info-box">
+      <strong>2026년 취득세율 기준:</strong> 주택 1세대1주택(6억이하 1%) · 농어촌특별세 포함<br/>
+      <strong>다주택 중과:</strong> 조정지역 2주택 8% | 3주택+ 12% | 비조정 2주택 1~3% | 3주택+ 8%<br/>
+      <strong>법인:</strong> 12% (농특세 별도)
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label>취득가액 (만원)</label>
+        <input type="number" class="form-control" id="at_price" value="50000" placeholder="50000"/>
+      </div>
+      <div class="col-md-6">
+        <label>주택 구분</label>
+        <select class="form-select" id="at_type">
+          <option value="house">주택</option>
+          <option value="nonhouse">비주택 (상가·토지·오피스텔)</option>
+        </select>
+      </div>
+      <div class="col-md-6" id="at_house_opts">
+        <label>보유 주택 수 (취득 후)</label>
+        <select class="form-select" id="at_count">
+          <option value="1">1주택 (생애최초 또는 1세대1주택)</option>
+          <option value="2">2주택</option>
+          <option value="3">3주택 이상</option>
+          <option value="corp">법인</option>
+        </select>
+      </div>
+      <div class="col-md-6" id="at_area_wrap">
+        <label>지역 구분</label>
+        <select class="form-select" id="at_area">
+          <option value="adj">조정대상지역</option>
+          <option value="nonadj">비조정대상지역</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label>생애최초 취득 여부</label>
+        <select class="form-select" id="at_first">
+          <option value="no">해당없음</option>
+          <option value="yes">생애최초 (200만원 한도 감면)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-calc mt-4" onclick="calcAcqui()">취득세 계산하기</button>
+    <div id="acquitax-result" style="margin-top:20px;display:none"></div>
+  </div>
 </div>
 
-<footer class="footer py-4 mt-5"><div class="container text-center"><p class="small mb-0" style="color:#aaa">© 2026. 대출상담사 바로찾기 All rights reserved. | 계산 결과는 참고용이며 실제와 다를 수 있습니다.</p></div></footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- HOLDTAX TAB -->
+<div id="tab-holdtax" class="calc-section">
+  <div class="calc-card">
+    <h4><i class="fas fa-home" style="color:#9333ea"></i>보유세 계산기 (재산세 + 종합부동산세)</h4>
+    <div class="info-box">
+      <strong>재산세:</strong> 공시가격 × 공정시장가액비율(60%) × 세율 (0.1~0.4%)<br/>
+      <strong>종합부동산세:</strong> (공시가격 합산 - 기본공제 9억원) × 공정시장가액비율(60%) × 세율 (0.5~5%)<br/>
+      <strong>1세대1주택 종부세 기본공제:</strong> 12억원 (2026년 기준)
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label>공시가격 (만원)</label>
+        <input type="number" class="form-control" id="ht_price" value="60000" placeholder="공시가격 만원"/>
+      </div>
+      <div class="col-md-6">
+        <label>주택 구분</label>
+        <select class="form-select" id="ht_type">
+          <option value="1house">1세대1주택 (종부세 기본공제 12억)</option>
+          <option value="multi">다주택 (종부세 기본공제 9억)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-calc mt-4" onclick="calcHold()">보유세 계산하기</button>
+    <div id="holdtax-result" style="margin-top:20px;display:none"></div>
+  </div>
+</div>
+
+<!-- TRANSFERTAX TAB -->
+<div id="tab-transfertax" class="calc-section">
+  <div class="calc-card">
+    <h4><i class="fas fa-exchange-alt" style="color:#e11d48"></i>양도소득세 계산기 (2026년 기준)</h4>
+    <div class="info-box">
+      <strong>2026년 양도소득세:</strong> 양도차익 - 장기보유특별공제 - 기본공제(250만원)<br/>
+      <strong>1세대1주택 비과세:</strong> 2년 이상 보유 (조정지역 2년 거주) + 실거래가 12억 이하<br/>
+      <strong>다주택 중과 (조정지역):</strong> 2주택 +20%p | 3주택+ +30%p (기본세율에 추가)<br/>
+      <strong>장기보유특별공제(일반):</strong> 3년 이상 보유시 연 2%씩 최대 30%
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label>취득가액 (만원)</label>
+        <input type="number" class="form-control" id="tt_buy" value="30000"/>
+      </div>
+      <div class="col-md-6">
+        <label>양도가액 (만원)</label>
+        <input type="number" class="form-control" id="tt_sell" value="50000"/>
+      </div>
+      <div class="col-md-4">
+        <label>필요경비 (만원)</label>
+        <input type="number" class="form-control" id="tt_cost" value="500" placeholder="취득세+중개수수료 등"/>
+      </div>
+      <div class="col-md-4">
+        <label>보유기간 (년)</label>
+        <input type="number" class="form-control" id="tt_hold" value="5" step="1"/>
+      </div>
+      <div class="col-md-4">
+        <label>거주기간 (년)</label>
+        <input type="number" class="form-control" id="tt_reside" value="3" step="1"/>
+      </div>
+      <div class="col-md-6">
+        <label>주택 구분</label>
+        <select class="form-select" id="tt_type">
+          <option value="1house_adj">1세대1주택 (조정지역)</option>
+          <option value="1house_nonadj">1세대1주택 (비조정)</option>
+          <option value="2house_adj">2주택 (조정지역 중과)</option>
+          <option value="2house_nonadj">2주택 (비조정)</option>
+          <option value="3house_adj">3주택+ (조정지역 중과)</option>
+          <option value="3house_nonadj">3주택+ (비조정)</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label>양도가액 (비과세 판단용)</label>
+        <div class="hint" style="margin-top:8px">실거래가 12억 초과시 비과세 불가 (2026년 기준)</div>
+      </div>
+    </div>
+    <button class="btn-calc mt-4" onclick="calcTransfer()">양도소득세 계산하기</button>
+    <div id="transfertax-result" style="margin-top:20px;display:none"></div>
+  </div>
+</div>
+
+<!-- GIFTTAX TAB -->
+<div id="tab-gifttax" class="calc-section">
+  <div class="calc-card">
+    <h4><i class="fas fa-gift" style="color:#ea580c"></i>상속·증여세 계산기 (2026년 기준)</h4>
+    <div class="info-box">
+      <strong>증여세 공제:</strong> 배우자 6억원 | 직계존속(부모→자녀) 5천만원(미성년 2천만원) | 직계비속 5천만원<br/>
+      <strong>증여세율:</strong> 1억이하 10% | 5억이하 20% | 10억이하 30% | 30억이하 40% | 30억초과 50%<br/>
+      <strong>상속세:</strong> 일괄공제 5억원 | 배우자 상속공제 최소 5억 (법정상속분 한도)<br/>
+      <strong>2026년 변경:</strong> 자녀 증여세 공제 5천만→1억원 (법안 통과 시 적용)
+    </div>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label>계산 구분</label>
+        <select class="form-select" id="gt_type">
+          <option value="gift">증여세</option>
+          <option value="inherit">상속세</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label>재산가액 (만원)</label>
+        <input type="number" class="form-control" id="gt_amount" value="100000"/>
+      </div>
+      <div class="col-md-4" id="gt_rel_wrap">
+        <label>증여자 관계</label>
+        <select class="form-select" id="gt_relation">
+          <option value="spouse">배우자 (공제 6억)</option>
+          <option value="child">직계존속→자녀 (공제 5천만)</option>
+          <option value="minor_child">직계존속→미성년자녀 (공제 2천만)</option>
+          <option value="parent">직계비속→부모 (공제 5천만)</option>
+          <option value="other">기타친족 (공제 1천만)</option>
+        </select>
+      </div>
+      <div class="col-md-4" id="gt_heir_wrap" style="display:none">
+        <label>상속인 구성</label>
+        <select class="form-select" id="gt_heirs">
+          <option value="spouse_child">배우자 + 자녀</option>
+          <option value="child_only">자녀만</option>
+          <option value="spouse_only">배우자만</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-calc mt-4" onclick="calcGift()">세금 계산하기</button>
+    <div id="gifttax-result" style="margin-top:20px;display:none"></div>
+  </div>
+</div>
+
+<!-- LEGALTAX TAB -->
+<div id="tab-legaltax" class="calc-section">
+  <div class="calc-card">
+    <h4><i class="fas fa-balance-scale" style="color:#059669"></i>법무수수료 계산기 (2026년 기준)</h4>
+    <div class="info-box">
+      <strong>법무사 보수:</strong> 대한법무사협회 보수 기준표 적용<br/>
+      <strong>등기신청 수수료:</strong> 1건당 15,000원 (전자신청 13,000원)<br/>
+      <strong>등록면허세:</strong> 매매 등기 시세 0.2% (주택), 취득세 포함 별도 발생
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label>거래금액 / 채권최고액 (만원)</label>
+        <input type="number" class="form-control" id="lt_amount" value="50000"/>
+      </div>
+      <div class="col-md-6">
+        <label>업무 구분</label>
+        <select class="form-select" id="lt_type">
+          <option value="buy">소유권이전 (매매)</option>
+          <option value="mortgage">근저당 설정</option>
+          <option value="both">소유권이전 + 근저당 설정</option>
+          <option value="inherit_reg">상속 등기</option>
+        </select>
+      </div>
+    </div>
 <script>
-function show(n,btn){document.querySelectorAll('.calc-section,[id^="calc-"]').forEach(s=>{if(s.id&&s.id.startsWith('calc-'))s.classList.add('d-none')});document.querySelectorAll('.calc-tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('calc-'+n).classList.remove('d-none');btn.classList.add('active');}
-function fmt(n){return Math.round(n).toLocaleString('ko-KR')+'원';}
-function calcM(){
-  const P=parseFloat(document.getElementById('m_amt').value)*10000;
-  const r=parseFloat(document.getElementById('m_rate').value)/100/12;
-  const n=parseFloat(document.getElementById('m_yr').value)*12;
-  const tp=document.getElementById('m_tp').value;
-  let mo,tot,int;
-  if(tp==='equal'){mo=P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);tot=mo*n;int=tot-P;}
-  else if(tp==='bullet'){mo=P*r;tot=mo*n+P;int=mo*n;}
-  else{const pp=P/n;mo=pp+P*r;tot=P+P*r*(n+1)/2;int=tot-P;}
-  const res=document.getElementById('m_res');res.classList.remove('d-none');
-  document.getElementById('m_rn').textContent=fmt(mo)+' / 월';
-  document.getElementById('m_rd').innerHTML='<div class="col-4 text-center"><div class="small opacity-75">대출금액</div><div class="fw-bold">'+fmt(P)+'</div></div><div class="col-4 text-center"><div class="small opacity-75">총 이자</div><div class="fw-bold">'+fmt(int)+'</div></div><div class="col-4 text-center"><div class="small opacity-75">총 상환금액</div><div class="fw-bold">'+fmt(tot)+'</div></div>';
+// ===== TAB NAVIGATION =====
+function showTab(id, btn) {
+  document.querySelectorAll('.calc-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.calc-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  // handle hash
+  location.hash = id;
 }
-// DSR 계산 - 금융감독원 규정 기반
-function getDSRMonthly(row) {
-  const tp=row.querySelector('[name="ltype"]').value;
-  const rt=row.querySelector('[name="rtype"]').value;
-  const rem=parseFloat(row.querySelector('[name="remain"]').value||0)*10000;
-  const per=parseFloat(row.querySelector('[name="period"]').value||0);
-  const rate=parseFloat(row.querySelector('[name="rate"]').value||0)/100/12;
-  const grace=parseFloat(row.querySelector('[name="grace"]').value||0);
-  if(!rem||!per)return 0;
-  // 전세대출은 DSR 미포함
-  if(tp==='jeonse_loan')return 0;
-  let monthly=0;
-  if(tp==='apt'||tp==='jungdo'){
-    if(tp==='jungdo'){// 중도금: 총액÷25년
-      const dummy=rem/(25*12);
-      const ir=rate||0.04/12;
-      monthly=dummy+rem*ir;
-    } else {
-      const activePer=per-grace;
-      if(rt==='equal'&&activePer>0){
-        if(rate>0)monthly=rem*rate*Math.pow(1+rate,activePer)/(Math.pow(1+rate,activePer)-1);
-        else monthly=rem/activePer;
-      } else if(rt==='principal'&&activePer>0){
-        monthly=rem/activePer+(rem*rate);
-      } else if(rt==='bullet'){
-        monthly=rem*rate+(rem/(per>0?per:120));
-      } else if(rt==='increasing'){
-        monthly=rem*rate*Math.pow(1+rate,activePer)/(Math.pow(1+rate,activePer)-1)*0.9;
-      }
-    }
-  } else if(tp==='jeonse_deposit'){monthly=rem/(4*12);
-  } else if(tp==='non_housing'){monthly=rem/(8*12);
-  } else if(tp==='other_collateral'){monthly=rem/(10*12);
-  } else if(tp==='credit'){
-    if(rt==='equal'||rt==='principal'){const y=Math.min(Math.max(per/12,5),10);if(rate>0)monthly=rem*rate*Math.pow(1+rate,y*12)/(Math.pow(1+rate,y*12)-1);else monthly=rem/(y*12);}
-    else{monthly=rem/(5*12);}
-  } else if(tp==='card'){
-    const y=Math.min(per/12,5);if(rate>0)monthly=rem*rate*Math.pow(1+rate,y*12)/(Math.pow(1+rate,y*12)-1);else monthly=rem/(y*12);
-  } else {monthly=rem/12;}
-  return monthly;
-}
-function calcDSR(){
-  const inc=parseFloat(document.getElementById('d_inc').value||0)*10000;
-  if(!inc){alert('연간 소득을 입력해주세요.');return;}
-  const tier=document.getElementById('d_tier').value;
-  const limit=tier==='1st'?40:50;
-  const rows=document.querySelectorAll('#d_loans .dsr-loan-row');
-  let totalMo=0;
-  let detailHTML='<table class="table table-sm small"><thead><tr><th>대출종류</th><th>잔액</th><th>상환방식</th><th>월상환액(DSR반영)</th></tr></thead><tbody>';
-  rows.forEach((row,i)=>{
-    const tp=row.querySelector('[name="ltype"]').value;
-    const rt=row.querySelector('[name="rtype"]').value;
-    const rem=parseFloat(row.querySelector('[name="remain"]').value||0)*10000;
-    const mo=getDSRMonthly(row);
-    totalMo+=mo;
-    const tpNames={'apt':'주택담보대출','jungdo':'중도금/이주비','jeonse_loan':'전세대출(제외)','jeonse_deposit':'전세보증금담보','credit':'신용대출','non_housing':'비주택담보','other_collateral':'기타담보','card':'장기카드대출','other':'기타대출'};
-    detailHTML+='<tr><td>'+(tpNames[tp]||tp)+'</td><td>'+Math.round(rem/10000).toLocaleString()+'만원</td><td>'+rt+'</td><td class="fw-bold '+(tp==='jeonse_loan'?'text-muted':'text-primary')+'">'+Math.round(mo).toLocaleString()+'원/월'+(tp==='jeonse_loan'?' (미포함)':'')+'</td></tr>';
+// On load, activate from hash
+window.addEventListener('DOMContentLoaded', function() {
+  initLoans();
+  const h = location.hash.replace('#','');
+  if (h) {
+    const btn = Array.from(document.querySelectorAll('.calc-nav-btn')).find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+h+"'"));
+    if (btn) { btn.click(); }
+  }
+  // gift tax type toggle
+  document.getElementById('gt_type').addEventListener('change', function() {
+    document.getElementById('gt_rel_wrap').style.display = this.value === 'gift' ? '' : 'none';
+    document.getElementById('gt_heir_wrap').style.display = this.value === 'inherit' ? '' : 'none';
   });
-  detailHTML+='<tr class="table-primary fw-bold"><td colspan="3">합계 월상환액</td><td>'+Math.round(totalMo).toLocaleString()+'원/월</td></tr></tbody></table>';
-  const annualPayment=totalMo*12;
-  const dsr=(annualPayment/inc*100);
-  const possible=(inc*limit/100)/12; // 월상환 가능액
-  document.getElementById('d_res').classList.remove('d-none');
-  document.getElementById('d_pct').textContent=dsr.toFixed(1)+'%';
-  document.getElementById('d_limit').textContent='기준: '+limit+'% 이하 ('+tier.replace('1st','1금융').replace('2nd','2금융')+')';
-  document.getElementById('d_inc_show').textContent=fmt(inc);
-  document.getElementById('d_annual').textContent=fmt(annualPayment);
-  document.getElementById('d_possible').textContent=fmt(possible)+'/월';
-  const bar=document.getElementById('d_bar');
-  const w=Math.min(dsr/limit*100,100);
-  bar.style.width=w+'%';
-  if(dsr<=limit*0.7)bar.style.background='#2ecc71';
-  else if(dsr<=limit)bar.style.background='linear-gradient(90deg,#f39c12,#e67e22)';
-  else bar.style.background='#e74c3c';
-  const msg=document.getElementById('d_msg');
-  if(dsr<=limit*0.7){msg.className='mt-3 p-2 rounded small bg-success text-white';msg.innerHTML='✅ <strong>양호</strong>: DSR '+dsr.toFixed(1)+'%로 기준('+limit+'%) 대비 여유가 있습니다. 추가 대출도 가능합니다.';}
-  else if(dsr<=limit){msg.className='mt-3 p-2 rounded small bg-warning text-dark';msg.innerHTML='⚠️ <strong>주의</strong>: DSR '+dsr.toFixed(1)+'%로 기준('+limit+'%) 이내이지만 여유가 많지 않습니다.';}
-  else{msg.className='mt-3 p-2 rounded small bg-danger text-white';msg.innerHTML='❌ <strong>초과</strong>: DSR '+dsr.toFixed(1)+'%로 기준('+limit+'%)을 초과합니다. 대출 심사가 어려울 수 있습니다.';}
-  document.getElementById('d_detail').innerHTML=detailHTML;
+  // acq tax type toggle
+  document.getElementById('at_type').addEventListener('change', function() {
+    const isHouse = this.value === 'house';
+    document.getElementById('at_house_opts').style.display = isHouse ? '' : 'none';
+    document.getElementById('at_area_wrap').style.display = isHouse ? '' : 'none';
+    document.getElementById('at_first').closest('.col-md-6').style.display = isHouse ? '' : 'none';
+  });
+});
+
+// ===== DSR CALCULATOR =====
+let loanCount = 0;
+function initLoans() { loanCount = 0; document.getElementById('loan-list').innerHTML = ''; addLoan(); }
+
+function addLoan() {
+  loanCount++;
+  const n = loanCount;
+  const div = document.createElement('div');
+  div.className = 'loan-entry';
+  div.id = 'loan-' + n;
+  div.innerHTML = `
+    <div class="loan-entry-header">
+      <span class="loan-num">대출 ${n}</span>
+      ${n > 1 ? '<button class="btn-remove" onclick="removeLoan(' + n + ')">삭제</button>' : ''}
+    </div>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label>대출 종류</label>
+        <select class="form-select" id="l_kind_${n}" onchange="updateLoanUI(${n})">
+          <option value="mortgage_equal">주택담보대출 (원금균등분할상환)</option>
+          <option value="mortgage_annuity">주택담보대출 (원리금균등분할상환)</option>
+          <option value="jungdo">중도금·이주비</option>
+          <option value="jeonse">전세자금대출 (DSR 제외)</option>
+          <option value="jeonse_collateral">전세보증금 담보대출</option>
+          <option value="non_house">비주택담보대출</option>
+          <option value="other_collateral">기타담보대출</option>
+          <option value="credit_installment">신용대출 (분할상환)</option>
+          <option value="credit_bullet">신용대출 (만기일시상환)</option>
+          <option value="card_loan">장기카드대출 (분할상환)</option>
+          <option value="other">기타 대출</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label>대출잔액 (만원)</label>
+        <input type="number" class="form-control" id="l_bal_${n}" value="30000"/>
+      </div>
+      <div class="col-md-2" id="l_rate_wrap_${n}">
+        <label>금리 (%)</label>
+        <input type="number" class="form-control" id="l_rate_${n}" value="3.5" step="0.1"/>
+      </div>
+      <div class="col-md-3" id="l_term_wrap_${n}">
+        <label id="l_term_lbl_${n}">잔여기간 (개월)</label>
+        <input type="number" class="form-control" id="l_term_${n}" value="360"/>
+      </div>
+    </div>
+  `;
+  document.getElementById('loan-list').appendChild(div);
 }
-let loanIdx=1;
-function addLoan(){
-  const html='<div class="dsr-loan-row" data-idx="'+loanIdx+'"><div class="row g-2 align-items-end"><div class="col-md-2"><label class="form-label">대출 종류</label><select class="form-select form-select-sm" name="ltype"><option value="apt">주택담보대출</option><option value="jungdo">중도금/이주비</option><option value="jeonse_loan">전세대출</option><option value="jeonse_deposit">전세보증금담보</option><option value="credit">신용대출</option><option value="non_housing">비주택담보</option><option value="other_collateral">기타담보</option><option value="card">장기카드대출</option><option value="other">기타대출</option></select></div><div class="col-md-2"><label class="form-label">상환방식</label><select class="form-select form-select-sm" name="rtype"><option value="equal">원리금균등</option><option value="principal">원금균등</option><option value="bullet">만기일시</option><option value="increasing">체증식</option></select></div><div class="col-md-2"><label class="form-label">잔액 (만원)</label><input type="number" class="form-control form-control-sm" name="remain" placeholder="잔액"/></div><div class="col-md-2"><label class="form-label">잔여기간(개월)</label><input type="number" class="form-control form-control-sm" name="period" placeholder="개월"/></div><div class="col-md-2"><label class="form-label">금리 (%)</label><input type="number" class="form-control form-control-sm" name="rate" placeholder="%" step="0.01"/></div><div class="col-md-1"><label class="form-label">거치(개월)</label><input type="number" class="form-control form-control-sm" name="grace" value="0"/></div><div class="col-md-1 d-flex align-items-end"><button class="btn btn-sm btn-outline-danger w-100" onclick="removeLoan(this)">삭제</button></div></div></div>';
-  document.getElementById('d_loans').insertAdjacentHTML('beforeend',html);
-  loanIdx++;
+
+function removeLoan(n) { const el = document.getElementById('loan-' + n); if (el) el.remove(); }
+
+function updateLoanUI(n) {
+  const kind = document.getElementById('l_kind_' + n).value;
+  const termWrap = document.getElementById('l_term_wrap_' + n);
+  const termLbl = document.getElementById('l_term_lbl_' + n);
+  const rateWrap = document.getElementById('l_rate_wrap_' + n);
+  // jeonse excluded, no term needed for fixed formulas
+  if (kind === 'jeonse') {
+    termWrap.style.opacity = '0.4';
+    rateWrap.style.opacity = '0.4';
+  } else {
+    termWrap.style.opacity = '1';
+    rateWrap.style.opacity = '1';
+  }
+  if (kind === 'credit_bullet') { termLbl.textContent = '대출기간 (개월)'; }
+  else if (kind === 'jungdo') { termLbl.textContent = '(자동: 25년 기준)'; }
+  else { termLbl.textContent = '잔여기간 (개월)'; }
 }
-function removeLoan(btn){const rows=document.querySelectorAll('#d_loans .dsr-loan-row');if(rows.length<=1){alert('최소 1개의 대출 정보가 필요합니다.');return;}btn.closest('.dsr-loan-row').remove();}
-function calcS(){
-  const amt=parseFloat(document.getElementById('s_amt').value)*10000;
-  const tp=document.getElementById('s_tp').value;
-  let stamp=0;
-  if(amt<=5000*10000)stamp=0;
-  else if(amt<=10000*10000)stamp=7*10000;
-  else if(amt<=100000*10000)stamp=15*10000;
-  else stamp=35*10000;
-  const brate=tp==='apt'?0.008:0.012;
-  const bond=amt*brate;const disc=bond*0.12;
-  document.getElementById('s_res').classList.remove('d-none');
-  document.getElementById('s_rd').innerHTML='<div class="col-12 mb-3"><div class="calc-result-label">계산 결과 (대출금 '+Math.round(amt/10000).toLocaleString()+'만원)</div></div><div class="col-6 text-center mb-2"><div class="small opacity-75 mb-1">인지세 (차주 1/2 부담)</div><div class="fw-bold fs-5">'+fmt(stamp/2)+'</div></div><div class="col-6 text-center mb-2"><div class="small opacity-75 mb-1">채권 발행 금액</div><div class="fw-bold fs-5">'+fmt(bond)+'</div></div><div class="col-6 text-center"><div class="small opacity-75 mb-1">채권 할인 비용 (~12%)</div><div class="fw-bold fs-5">'+fmt(disc)+'</div></div><div class="col-6 text-center"><div class="small opacity-75 mb-1">예상 총 비용</div><div class="fw-bold fs-5 text-warning">'+fmt(stamp/2+disc)+'</div></div>';
+
+function calcDSR() {
+  const income = parseFloat(document.getElementById('d_income').value) * 10000;
+  const tier = document.getElementById('d_tier').value;
+  const area = document.getElementById('d_area').value;
+  const stressMap = { metro: 0.03, local: 0.0075, general: 0.015 };
+  const stressRate = stressMap[area];
+  const limitPct = tier === '1st' ? 40 : 50;
+
+  if (!income || income <= 0) { alert('연소득을 입력하세요'); return; }
+
+  let totalAnnual = 0;
+  let rows = [];
+  let loanNum = 0;
+
+  document.querySelectorAll('.loan-entry').forEach(function(entry) {
+    const id = entry.id.replace('loan-', '');
+    loanNum++;
+    const kind = document.getElementById('l_kind_' + id)?.value;
+    const bal = parseFloat(document.getElementById('l_bal_' + id)?.value || 0) * 10000;
+    const rateRaw = parseFloat(document.getElementById('l_rate_' + id)?.value || 3.5) / 100;
+    const term = parseInt(document.getElementById('l_term_' + id)?.value || 360);
+    const kindNames = {
+      mortgage_equal:'주택담보(원금균등)', mortgage_annuity:'주택담보(원리금균등)',
+      jungdo:'중도금·이주비', jeonse:'전세자금대출', jeonse_collateral:'전세보증금담보',
+      non_house:'비주택담보', other_collateral:'기타담보', credit_installment:'신용대출(분할)',
+      credit_bullet:'신용대출(만기일시)', card_loan:'장기카드대출(분할)', other:'기타대출'
+    };
+    const kindName = kindNames[kind] || kind;
+
+    // Apply stress rate to mortgage and credit
+    let rate = rateRaw;
+    if (['mortgage_equal','mortgage_annuity','jungdo','jeonse_collateral','non_house','other_collateral','credit_installment','credit_bullet','card_loan'].includes(kind)) {
+      rate = rateRaw + stressRate;
+    }
+
+    let annualPrincipal = 0;
+    let annualInterest = 0;
+    let note = '';
+    let excluded = false;
+
+    if (kind === 'jeonse') {
+      // 전세대출 DSR 제외
+      excluded = true;
+      note = 'DSR 계산 제외 (전세자금대출)';
+    } else if (kind === 'mortgage_equal' || kind === 'mortgage_annuity') {
+      // 원금균등: 월원금 = bal/term, 연원금 = bal/term*12, 연이자 = bal*rate (평균)
+      if (kind === 'mortgage_equal') {
+        annualPrincipal = (bal / term) * 12;
+        annualInterest = bal * rate; // approximate
+        note = '실제 상환액';
+      } else {
+        // 원리금균등
+        const mr = rate / 12;
+        const monthly = mr === 0 ? bal / term : bal * mr * Math.pow(1+mr,term) / (Math.pow(1+mr,term)-1);
+        annualPrincipal = monthly * 12 - bal * rate;
+        annualInterest = bal * rate;
+        note = '실제 상환액';
+      }
+    } else if (kind === 'jungdo') {
+      // 중도금: 총대출/25년
+      annualPrincipal = bal / 25;
+      annualInterest = bal * rate;
+      note = '대출총액/25년';
+    } else if (kind === 'jeonse_collateral') {
+      // 전세보증금담보: 총대출/4년
+      annualPrincipal = bal / 4;
+      annualInterest = bal * rate;
+      note = '대출총액/4년';
+    } else if (kind === 'non_house') {
+      // 비주택담보: 총대출/8년
+      annualPrincipal = bal / 8;
+      annualInterest = bal * rate;
+      note = '대출총액/8년';
+    } else if (kind === 'other_collateral') {
+      // 기타담보: 총대출/10년
+      annualPrincipal = bal / 10;
+      annualInterest = bal * rate;
+      note = '대출총액/10년';
+    } else if (kind === 'credit_installment') {
+      // 신용대출 분할: 대출총액/약정만기(5~10년)
+      const termYr = Math.max(5, Math.min(10, term/12));
+      annualPrincipal = bal / termYr;
+      annualInterest = bal * rate;
+      note = '대출총액/약정기간(' + termYr.toFixed(1) + '년)';
+    } else if (kind === 'credit_bullet') {
+      // 신용대출 만기일시: 총대출/5년
+      annualPrincipal = bal / 5;
+      annualInterest = bal * rate;
+      note = '대출총액/5년';
+    } else if (kind === 'card_loan') {
+      // 장기카드대출(분할): 약정만기(≤5년)
+      const termYr = Math.min(5, term/12);
+      annualPrincipal = bal / termYr;
+      annualInterest = bal * rate;
+      note = '약정만기(' + termYr.toFixed(1) + '년)';
+    } else {
+      // 기타: 향후 12개월 실제 상환액
+      annualPrincipal = bal / (term/12);
+      annualInterest = bal * rate;
+      note = '향후 12개월 실제상환';
+    }
+
+    const annual = excluded ? 0 : (annualPrincipal + annualInterest);
+    if (!excluded) totalAnnual += annual;
+
+    rows.push({ num: loanNum, name: kindName, bal, rateRaw: rateRaw*100, rate: rate*100, term, annualPrincipal, annualInterest, annual, note, excluded });
+  });
+
+  const dsr = income > 0 ? (totalAnnual / income) * 100 : 0;
+  const ok = dsr <= limitPct;
+  const badge = dsr <= limitPct * 0.8 ? '<span class="badge-ok">양호</span>' : dsr <= limitPct ? '<span class="badge-warn">주의</span>' : '<span class="badge-over">초과</span>';
+  const gaugeColor = dsr > limitPct ? '#dc2626' : dsr > limitPct * 0.8 ? '#f59e0b' : '#16a34a';
+  const gaugePct = Math.min(dsr, 100);
+  const areaNames = { metro:'수도권', local:'지방', general:'일반' };
+
+  let tableRows = '';
+  rows.forEach(function(r) {
+    tableRows += `<tr class="loan-header"><td colspan="4"><strong>대출${r.num}: ${r.name}</strong> | 잔액 ${fmt(r.bal)}원 | 적용금리 ${r.rate.toFixed(2)}% (기본 ${r.rateRaw.toFixed(2)}% + 스트레스 ${(r.rate - r.rateRaw).toFixed(2)}%)</td></tr>`;
+    if (r.excluded) {
+      tableRows += `<tr><td colspan="4" style="color:#64748b;font-style:italic">→ ${r.note}</td></tr>`;
+    } else {
+      tableRows += `
+        <tr><td>#</td><td>적요</td><td>금액</td><td>비고</td></tr>
+        <tr><td></td><td>연원금상환액</td><td>${fmt(r.annualPrincipal)}원</td><td>${r.note}</td></tr>
+        <tr><td></td><td>연이자상환액</td><td>${fmt(r.annualInterest)}원</td><td>실제 납부이자</td></tr>
+        <tr><td></td><td><strong>연 원리금합계</strong></td><td><strong>${fmt(r.annual)}원</strong></td><td></td></tr>
+      `;
+    }
+  });
+
+  const html = `
+    <div class="result-box">
+      <div class="detail-table-wrap" style="overflow-x:auto">
+        <table class="detail-table">
+          <tr><th>#</th><th>적요</th><th>금액</th><th>비고</th></tr>
+          <tr><td>1</td><td>연소득</td><td>${fmt(income)}원</td><td>입력값</td></tr>
+          <tr><td>2</td><td>총대출건수</td><td>${rows.length}건</td><td>(본건 포함)</td></tr>
+          ${tableRows}
+          <tr class="total-row"><td></td><td>총 연원리금상환액</td><td>${fmt(totalAnnual)}원</td><td>대출 원금+이자 상환액 합산</td></tr>
+          <tr class="dsr-row"><td><strong>DSR</strong></td><td><strong>DSR</strong></td><td><strong>${dsr.toFixed(2)}%</strong></td><td><strong>총 원리금상환액 / 연소득 × 100</strong></td></tr>
+        </table>
+      </div>
+      <div style="margin-top:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:14px;color:#64748b">DSR ${dsr.toFixed(2)}% / 한도 ${limitPct}% (${tier === '1st' ? '1금융권' : '2금융권'})</span>
+          ${badge}
+        </div>
+        <div class="dsr-gauge"><div class="dsr-gauge-fill" style="width:${gaugePct}%;background:${gaugeColor}"></div></div>
+        <div style="font-size:12px;color:#94a3b8;margin-top:4px">
+          지역: ${areaNames[area]} | 스트레스금리 +${(stressMap[area]*100).toFixed(2)}% 적용
+        </div>
+      </div>
+    </div>
+  `;
+  const el = document.getElementById('dsr-result');
+  el.innerHTML = html;
+  el.style.display = 'block';
 }
-function calcP(){
-  const tot=parseFloat(document.getElementById('p_total').value)*10000;
-  const pay=parseFloat(document.getElementById('p_pay').value)*10000;
-  const mon=parseFloat(document.getElementById('p_mon').value);
-  const rate=parseFloat(document.getElementById('p_rate').value)/100;
-  const rem=Math.max(0,36-mon);
-  const fee=pay*rate*(rem/36);
-  document.getElementById('p_res').classList.remove('d-none');
-  document.getElementById('p_rn').textContent=fmt(fee);
-  document.getElementById('p_rd').textContent='잔여 수수료 부과기간: '+rem+'개월 (36개월 기준)';
+</script><script>
+// ===== FORMAT HELPER =====
+function fmt(n) { return Math.round(n).toLocaleString('ko-KR'); }
+
+// ===== MONTHLY CALC =====
+function calcMonthly() {
+  const P = parseFloat(document.getElementById('m_amt').value) * 10000;
+  const rAnn = parseFloat(document.getElementById('m_rate').value) / 100;
+  const yr = parseFloat(document.getElementById('m_yr').value);
+  const n = yr * 12;
+  const tp = document.getElementById('m_tp').value;
+  const r = rAnn / 12;
+  let html = '';
+
+  if (tp === 'equal') {
+    const M = r === 0 ? P/n : P * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+    const total = M * n;
+    html = resultBox('월 납입금 (원리금균등)', fmt(M) + '원', [
+      ['대출금액', fmt(P) + '원'],
+      ['총 납입액', fmt(total) + '원'],
+      ['총 이자액', fmt(total - P) + '원'],
+      ['상환기간', yr + '년 (' + n + '회)']
+    ]);
+  } else if (tp === 'principal') {
+    const monthly_p = P / n;
+    const first_int = P * r;
+    const first = monthly_p + first_int;
+    const last = monthly_p + monthly_p * r;
+    const total = P + P * r * (n+1) / 2;
+    html = resultBox('첫달 납입금 (원금균등)', fmt(first) + '원', [
+      ['월 원금 상환', fmt(monthly_p) + '원 (고정)'],
+      ['첫달 이자', fmt(first_int) + '원'],
+      ['마지막달 납입', fmt(last) + '원'],
+      ['총 납입액', fmt(total) + '원'],
+      ['총 이자액', fmt(total - P) + '원']
+    ]);
+  } else if (tp === 'bullet') {
+    const monthly_int = P * r;
+    const total = monthly_int * n + P;
+    html = resultBox('월 납입금 (만기일시상환)', fmt(monthly_int) + '원 (이자만)', [
+      ['월 이자', fmt(monthly_int) + '원'],
+      ['만기 일시상환', fmt(P) + '원'],
+      ['총 이자액', fmt(monthly_int * n) + '원']
+    ]);
+  } else if (tp === 'grace5') {
+    const grace_n = 60; // 5년 거치
+    const repay_n = n - grace_n;
+    const monthly_grace = P * r;
+    const M_repay = r === 0 ? P/repay_n : P * r * Math.pow(1+r,repay_n) / (Math.pow(1+r,repay_n)-1);
+    html = resultBox('거치기간 월납입 (이자만)', fmt(monthly_grace) + '원', [
+      ['거치기간 (5년)', '월 ' + fmt(monthly_grace) + '원 (이자만)'],
+      ['상환기간 월납입', fmt(M_repay) + '원 (원리금균등)'],
+      ['상환기간', (yr - 5) + '년'],
+    ]);
+  }
+  const el = document.getElementById('monthly-result');
+  el.innerHTML = html;
+  el.style.display = 'block';
 }
-window.addEventListener('load',()=>{const h=location.hash.replace('#','');if(h){const btn=document.querySelector('[onclick*="'+h+'"]');if(btn)show(h,btn);}});
-</script></body></html>
+
+function resultBox(label, value, rows) {
+  let trs = rows.map(r => '<tr><td>' + r[0] + '</td><td style="text-align:right;font-weight:600">' + r[1] + '</td></tr>').join('');
+  return '<div class="result-box"><div class="result-main"><div class="label">' + label + '</div><div class="value">' + value + '</div></div><table class="detail-table">' + trs + '</table></div>';
+}
+
+// ===== ACQUITAX =====
+function calcAcqui() {
+  const price = parseFloat(document.getElementById('at_price').value) * 10000;
+  const type = document.getElementById('at_type').value;
+  const isFirst = document.getElementById('at_first').value === 'yes';
+  let rate = 0, local_edu = 0, farm_special = 0;
+
+  if (type === 'nonhouse') {
+    rate = 0.04; // 4%
+    local_edu = price * 0.04 * 0.1; // 지방교육세 10%
+    farm_special = price * 0.04 * 0.2; // 농특세 20%
+  } else {
+    const count = document.getElementById('at_count').value;
+    const area = document.getElementById('at_area').value;
+    if (count === 'corp') {
+      rate = 0.12;
+      farm_special = price * 0.12 * (1/3);
+    } else if (count === '1') {
+      if (price <= 60000000) rate = 0.01;
+      else if (price <= 90000000) rate = 0.02;
+      else if (price <= 1200000000) rate = 0.03;
+      else rate = 0.03;
+      local_edu = price * rate * 0.1;
+      if (rate >= 0.02) farm_special = price * 0.02 * 0.1;
+    } else if (count === '2') {
+      rate = area === 'adj' ? 0.08 : 0.01; // 조정 8%, 비조정 1~3%
+      if (area !== 'adj' && price > 600000000) rate = 0.03;
+      local_edu = price * Math.min(rate, 0.03) * 0.1;
+      if (area === 'adj') farm_special = price * 0.08 * 0.1;
+    } else if (count === '3') {
+      rate = area === 'adj' ? 0.12 : 0.08;
+      if (area === 'adj') farm_special = price * 0.12 * (1/3);
+      local_edu = price * Math.min(rate, 0.03) * 0.1;
+    }
+  }
+
+  let acqui = price * rate;
+  let firstDiscount = 0;
+  if (isFirst && type === 'house') { firstDiscount = Math.min(acqui, 2000000); acqui -= firstDiscount; }
+  const total = acqui + local_edu + farm_special;
+
+  const el = document.getElementById('acquitax-result');
+  el.innerHTML = '<div class="result-box">' +
+    '<div class="result-main"><div class="label">총 취득 관련 세금</div><div class="value">' + fmt(total) + '원</div></div>' +
+    '<div class="tax-result-grid">' +
+    '<div class="tax-result-item"><div class="tlabel">취득세</div><div class="tval">' + fmt(acqui) + '원</div></div>' +
+    '<div class="tax-result-item"><div class="tlabel">지방교육세</div><div class="tval">' + fmt(local_edu) + '원</div></div>' +
+    '<div class="tax-result-item"><div class="tlabel">농어촌특별세</div><div class="tval">' + fmt(farm_special) + '원</div></div>' +
+    (firstDiscount > 0 ? '<div class="tax-result-item"><div class="tlabel">생애최초감면</div><div class="tval">-' + fmt(firstDiscount) + '원</div></div>' : '') +
+    '</div>' +
+    '<table class="detail-table" style="margin-top:12px"><tr><td>취득가액</td><td>' + fmt(price) + '원</td></tr><tr><td>세율</td><td>' + (rate*100).toFixed(1) + '%</td></tr></table>' +
+    '</div>';
+  el.style.display = 'block';
+}
+
+// ===== HOLDTAX =====
+function calcHold() {
+  const gonsi = parseFloat(document.getElementById('ht_price').value) * 10000;
+  const htype = document.getElementById('ht_type').value;
+  const fairRatio = 0.6;
+  const base = gonsi * fairRatio;
+
+  // 재산세
+  let jaesan = 0;
+  if (base <= 60000000) jaesan = base * 0.001;
+  else if (base <= 150000000) jaesan = 60000 + (base - 60000000) * 0.0015;
+  else if (base <= 300000000) jaesan = 195000 + (base - 150000000) * 0.0025;
+  else jaesan = 570000 + (base - 300000000) * 0.004;
+
+  // 종합부동산세
+  const jongbu_deduct = htype === '1house' ? 1200000000 : 900000000;
+  const jongbu_base = Math.max(0, gonsi - jongbu_deduct) * fairRatio;
+  let jongbu = 0;
+  if (jongbu_base > 0) {
+    if (htype === '1house') {
+      if (jongbu_base <= 300000000) jongbu = jongbu_base * 0.005;
+      else if (jongbu_base <= 600000000) jongbu = 1500000 + (jongbu_base-300000000)*0.007;
+      else if (jongbu_base <= 1200000000) jongbu = 3600000 + (jongbu_base-600000000)*0.01;
+      else if (jongbu_base <= 5000000000) jongbu = 9600000 + (jongbu_base-1200000000)*0.014;
+      else jongbu = 62800000 + (jongbu_base-5000000000)*0.03;
+    } else {
+      if (jongbu_base <= 200000000) jongbu = jongbu_base * 0.006;
+      else if (jongbu_base <= 400000000) jongbu = 1200000 + (jongbu_base-200000000)*0.008;
+      else if (jongbu_base <= 600000000) jongbu = 2800000 + (jongbu_base-400000000)*0.013;
+      else if (jongbu_base <= 1200000000) jongbu = 5400000 + (jongbu_base-600000000)*0.018;
+      else if (jongbu_base <= 5000000000) jongbu = 16200000 + (jongbu_base-1200000000)*0.025;
+      else jongbu = 111200000 + (jongbu_base-5000000000)*0.05;
+    }
+  }
+  const agri = jongbu * 0.2;
+  const total = jaesan + jongbu + agri;
+
+  const el = document.getElementById('holdtax-result');
+  el.innerHTML = '<div class="result-box">' +
+    '<div class="result-main"><div class="label">연간 보유세 합계</div><div class="value">' + fmt(total) + '원</div></div>' +
+    '<div class="tax-result-grid">' +
+    '<div class="tax-result-item"><div class="tlabel">재산세</div><div class="tval">' + fmt(jaesan) + '원</div></div>' +
+    '<div class="tax-result-item"><div class="tlabel">종합부동산세</div><div class="tval">' + fmt(jongbu) + '원</div></div>' +
+    '<div class="tax-result-item"><div class="tlabel">농어촌특별세</div><div class="tval">' + fmt(agri) + '원</div></div>' +
+    '</div>' +
+    '<table class="detail-table" style="margin-top:12px">' +
+    '<tr><td>공시가격</td><td>' + fmt(gonsi) + '원</td></tr>' +
+    '<tr><td>과세표준(재산세)</td><td>' + fmt(base) + '원 (공정시장가액비율 60%)</td></tr>' +
+    (jongbu > 0 ? '<tr><td>종부세 과세기준액</td><td>' + fmt(jongbu_deduct) + '원 공제 후 ' + fmt(jongbu_base) + '원</td></tr>' : '') +
+    '</table></div>';
+  el.style.display = 'block';
+}
+
+// ===== TRANSFERTAX =====
+function calcTransfer() {
+  const buy = parseFloat(document.getElementById('tt_buy').value) * 10000;
+  const sell = parseFloat(document.getElementById('tt_sell').value) * 10000;
+  const cost = parseFloat(document.getElementById('tt_cost').value) * 10000;
+  const holdYr = parseFloat(document.getElementById('tt_hold').value);
+  const resideYr = parseFloat(document.getElementById('tt_reside').value);
+  const type = document.getElementById('tt_type').value;
+  const gain = sell - buy - cost;
+  const basicDeduct = 2500000;
+
+  // 비과세 판단
+  let exempt = false;
+  let exemptNote = '';
+  if (type.includes('1house') && sell <= 1200000000) {
+    if (type === '1house_adj' && holdYr >= 2 && resideYr >= 2) { exempt = true; exemptNote = '1세대1주택 비과세 (조정지역 2년 거주)'; }
+    else if (type === '1house_nonadj' && holdYr >= 2) { exempt = true; exemptNote = '1세대1주택 비과세 (비조정 2년 보유)'; }
+  }
+  // 고가주택 초과분 과세
+  let taxableGain = gain;
+  if (exempt && sell > 1200000000) {
+    taxableGain = gain * (sell - 1200000000) / sell;
+    exempt = false;
+    exemptNote = '고가주택 일부 과세';
+  }
+
+  // 장기보유특별공제
+  let ltDeductRate = 0;
+  if (!exempt) {
+    if (type === '1house_adj' || type === '1house_nonadj') {
+      // 1주택: 보유+거주 각 4%씩 최대 80%
+      ltDeductRate = Math.min(holdYr * 0.04 + resideYr * 0.04, 0.80);
+      if (holdYr < 3) ltDeductRate = 0;
+    } else {
+      // 일반: 연2% 최대30%
+      ltDeductRate = holdYr >= 3 ? Math.min((holdYr - 3 + 1) * 0.02, 0.30) : 0;
+      if (type.includes('adj')) ltDeductRate = 0; // 조정지역 다주택 공제 없음
+    }
+  }
+  const ltDeduct = taxableGain * ltDeductRate;
+  const afterLT = taxableGain - ltDeduct - basicDeduct;
+
+  // 세율
+  let taxRate = 0, addRate = 0;
+  if (type.includes('2house') && type.includes('adj')) addRate = 0.20;
+  if (type.includes('3house') && type.includes('adj')) addRate = 0.30;
+  if (holdYr < 1) taxRate = 0.70;
+  else if (holdYr < 2) taxRate = 0.60;
+  else {
+    if (afterLT <= 14000000) taxRate = 0.06;
+    else if (afterLT <= 50000000) taxRate = 0.15;
+    else if (afterLT <= 88000000) taxRate = 0.24;
+    else if (afterLT <= 150000000) taxRate = 0.35;
+    else if (afterLT <= 300000000) taxRate = 0.38;
+    else if (afterLT <= 500000000) taxRate = 0.40;
+    else if (afterLT <= 1000000000) taxRate = 0.42;
+    else taxRate = 0.45;
+    taxRate = Math.min(taxRate + addRate, 0.82);
+  }
+  const tax = exempt ? 0 : Math.max(0, afterLT * taxRate);
+  const local = tax * 0.1;
+  const total = tax + local;
+
+  const el = document.getElementById('transfertax-result');
+  if (exempt && sell <= 1200000000) {
+    el.innerHTML = '<div class="result-box"><div class="result-main"><div class="label">양도소득세</div><div class="value" style="color:#16a34a">비과세</div></div><p style="text-align:center;color:#166534;font-size:14px">' + exemptNote + '</p></div>';
+  } else {
+    el.innerHTML = '<div class="result-box">' +
+      '<div class="result-main"><div class="label">양도소득세 + 지방소득세</div><div class="value">' + fmt(total) + '원</div></div>' +
+      '<div class="tax-result-grid">' +
+      '<div class="tax-result-item"><div class="tlabel">양도소득세</div><div class="tval">' + fmt(tax) + '원</div></div>' +
+      '<div class="tax-result-item"><div class="tlabel">지방소득세</div><div class="tval">' + fmt(local) + '원</div></div>' +
+      '</div>' +
+      '<table class="detail-table" style="margin-top:12px">' +
+      '<tr><td>양도차익</td><td>' + fmt(gain) + '원</td></tr>' +
+      '<tr><td>장기보유특별공제</td><td>-' + fmt(ltDeduct) + '원 (' + (ltDeductRate*100).toFixed(0) + '%)</td></tr>' +
+      '<tr><td>기본공제</td><td>-250만원</td></tr>' +
+      '<tr><td>과세표준</td><td>' + fmt(afterLT) + '원</td></tr>' +
+      '<tr><td>적용세율</td><td>' + (taxRate*100).toFixed(0) + '%' + (addRate > 0 ? ' (중과 +' + (addRate*100) + '%p 포함)' : '') + '</td></tr>' +
+      '</table></div>';
+  }
+  el.style.display = 'block';
+}
+
+// ===== GIFTTAX =====
+function calcGift() {
+  const amount = parseFloat(document.getElementById('gt_amount').value) * 10000;
+  const type = document.getElementById('gt_type').value;
+
+  if (type === 'gift') {
+    const relMap = { spouse: 600000000, child: 50000000, minor_child: 20000000, parent: 50000000, other: 10000000 };
+    const relName = { spouse: '배우자', child: '직계존속→자녀', minor_child: '직계→미성년자녀', parent: '직계비속→부모', other: '기타친족' };
+    const rel = document.getElementById('gt_relation').value;
+    const deduct = relMap[rel];
+    const taxable = Math.max(0, amount - deduct);
+    const tax = calcGiftTax(taxable);
+    const local = tax * 0.1;
+    const total = tax + local;
+    const el = document.getElementById('gifttax-result');
+    el.innerHTML = '<div class="result-box"><div class="result-main"><div class="label">증여세 + 지방소득세</div><div class="value">' + fmt(total) + '원</div></div>' +
+      '<div class="tax-result-grid"><div class="tax-result-item"><div class="tlabel">증여세</div><div class="tval">' + fmt(tax) + '원</div></div>' +
+      '<div class="tax-result-item"><div class="tlabel">지방소득세</div><div class="tval">' + fmt(local) + '원</div></div></div>' +
+      '<table class="detail-table" style="margin-top:12px">' +
+      '<tr><td>증여재산가액</td><td>' + fmt(amount) + '원</td></tr>' +
+      '<tr><td>증여세 공제(' + relName[rel] + ')</td><td>-' + fmt(deduct) + '원</td></tr>' +
+      '<tr><td>과세표준</td><td>' + fmt(taxable) + '원</td></tr></table></div>';
+    el.style.display = 'block';
+  } else {
+    // 상속세
+    const heirs = document.getElementById('gt_heirs').value;
+    let deduct = 500000000; // 일괄공제 5억
+    if (heirs === 'spouse_child' || heirs === 'spouse_only') deduct += 500000000; // 배우자 공제 최소 5억
+    const taxable = Math.max(0, amount - deduct);
+    const tax = calcInheritTax(taxable);
+    const local = tax * 0.1;
+    const total = tax + local;
+    const el = document.getElementById('gifttax-result');
+    el.innerHTML = '<div class="result-box"><div class="result-main"><div class="label">상속세 + 가산세(지방)</div><div class="value">' + fmt(total) + '원</div></div>' +
+      '<div class="tax-result-grid"><div class="tax-result-item"><div class="tlabel">상속세</div><div class="tval">' + fmt(tax) + '원</div></div>' +
+      '<div class="tax-result-item"><div class="tlabel">지방소득세</div><div class="tval">' + fmt(local) + '원</div></div></div>' +
+      '<table class="detail-table" style="margin-top:12px">' +
+      '<tr><td>상속재산가액</td><td>' + fmt(amount) + '원</td></tr>' +
+      '<tr><td>공제합계</td><td>-' + fmt(deduct) + '원</td></tr>' +
+      '<tr><td>과세표준</td><td>' + fmt(taxable) + '원</td></tr></table></div>';
+    el.style.display = 'block';
+  }
+}
+function calcGiftTax(t) {
+  if (t <= 100000000) return t * 0.10;
+  if (t <= 500000000) return 10000000 + (t-100000000)*0.20;
+  if (t <= 1000000000) return 90000000 + (t-500000000)*0.30;
+  if (t <= 3000000000) return 240000000 + (t-1000000000)*0.40;
+  return 1040000000 + (t-3000000000)*0.50;
+}
+function calcInheritTax(t) {
+  if (t <= 100000000) return t * 0.10;
+  if (t <= 500000000) return 10000000 + (t-100000000)*0.20;
+  if (t <= 1000000000) return 90000000 + (t-500000000)*0.30;
+  if (t <= 3000000000) return 240000000 + (t-1000000000)*0.40;
+  return 1040000000 + (t-3000000000)*0.50;
+}
+
+// ===== LEGALTAX =====
+function calcLegal() {
+  const amount = parseFloat(document.getElementById('lt_amount').value) * 10000;
+  const type = document.getElementById('lt_type').value;
+  let jurist = 0, reg_fee = 0, stamp = 0, bond = 0;
+
+  // 법무사 보수 (대한법무사협회 기준표)
+  function juristFee(amt) {
+    if (amt <= 10000000) return 100000;
+    if (amt <= 50000000) return 100000 + (amt-10000000)*0.002;
+    if (amt <= 100000000) return 180000 + (amt-50000000)*0.0015;
+    if (amt <= 300000000) return 255000 + (amt-100000000)*0.001;
+    if (amt <= 1000000000) return 455000 + (amt-300000000)*0.0007;
+    return 945000 + (amt-1000000000)*0.0003;
+  }
+
+  if (type === 'buy') {
+    jurist = juristFee(amount) + 100000;
+    reg_fee = 15000 * 2; // 2건
+    stamp = amount < 10000000 ? 0 : amount < 100000000 ? 70000 : amount < 1000000000 ? 150000 : 350000;
+  } else if (type === 'mortgage') {
+    jurist = juristFee(amount);
+    reg_fee = 15000;
+    stamp = amount < 10000000 ? 0 : amount < 100000000 ? 70000 : amount < 1000000000 ? 150000 : 350000;
+    bond = amount * 0.013; // 국민주택채권 매입 1.3%
+  } else if (type === 'both') {
+    jurist = juristFee(amount) + juristFee(amount * 1.2) + 100000;
+    reg_fee = 15000 * 3;
+    stamp = amount < 10000000 ? 0 : amount < 100000000 ? 140000 : amount < 1000000000 ? 300000 : 700000;
+    bond = amount * 1.2 * 0.013;
+  } else {
+    jurist = juristFee(amount) + 150000;
+    reg_fee = 15000 * 2;
+    stamp = 30000;
+  }
+  const total = jurist + reg_fee + stamp + bond;
+
+  const el = document.getElementById('legaltax-result');
+  el.innerHTML = '<div class="result-box"><div class="result-main"><div class="label">예상 법무수수료 합계</div><div class="value">' + fmt(total) + '원</div></div>' +
+    '<div class="tax-result-grid">' +
+    '<div class="tax-result-item"><div class="tlabel">법무사 보수</div><div class="tval">' + fmt(jurist) + '원</div></div>' +
+    '<div class="tax-result-item"><div class="tlabel">등기신청 수수료</div><div class="tval">' + fmt(reg_fee) + '원</div></div>' +
+    '<div class="tax-result-item"><div class="tlabel">인지세</div><div class="tval">' + fmt(stamp) + '원</div></div>' +
+    (bond > 0 ? '<div class="tax-result-item"><div class="tlabel">국민주택채권</div><div class="tval">' + fmt(bond) + '원</div></div>' : '') +
+    '</div><p style="font-size:12px;color:#94a3b8;margin-top:10px">※ 실제 수수료는 업무 복잡도에 따라 달라질 수 있습니다</p></div>';
+  el.style.display = 'block';
+}
+
+// ===== STAMP =====
+function calcStamp() {
+  const amt = parseFloat(document.getElementById('st_amt').value) * 10000;
+  const type = document.getElementById('st_type').value;
+  let stamp = 0, bond = 0, bond_sell_loss = 0;
+  if (amt < 10000000) stamp = 0;
+  else if (amt < 100000000) stamp = 70000;
+  else if (amt < 1000000000) stamp = 150000;
+  else stamp = 350000;
+  if (type === 'house') {
+    if (amt < 20000000) bond = 0;
+    else if (amt < 50000000) bond = amt * 0.008;
+    else if (amt < 100000000) bond = amt * 0.010;
+    else if (amt < 200000000) bond = amt * 0.013;
+    else bond = amt * 0.015;
+    bond_sell_loss = bond * 0.025; // 즉시 매각 손실률 약 2.5%
+  }
+  const total = stamp + bond;
+  const el = document.getElementById('stamp-result');
+  el.innerHTML = '<div class="result-box"><div class="result-main"><div class="label">인지세 + 채권 매입</div><div class="value">' + fmt(total) + '원</div></div>' +
+    '<div class="tax-result-grid">' +
+    '<div class="tax-result-item"><div class="tlabel">인지세</div><div class="tval">' + fmt(stamp) + '원</div></div>' +
+    (bond > 0 ? '<div class="tax-result-item"><div class="tlabel">국민주택채권 매입</div><div class="tval">' + fmt(bond) + '원</div></div>' : '') +
+    (bond_sell_loss > 0 ? '<div class="tax-result-item"><div class="tlabel">채권 즉시매도 손실(약)</div><div class="tval">-' + fmt(bond_sell_loss) + '원</div></div>' : '') +
+    '</div></div>';
+  el.style.display = 'block';
+}
+</script>
+</body>
+  </html>
+    <button class="btn-calc mt-4" onclick="calcLegal()">법무수수료 계산하기</button>
+    <div id="legaltax-result" style="margin-top:20px;display:none"></div>
+  </div>
+</div>
+
+<!-- STAMP TAB -->
+<div id="tab-stamp" class="calc-section">
+  <div class="calc-card">
+    <h4><i class="fas fa-stamp" style="color:#6366f1"></i>인지세 · 국민주택채권 계산기</h4>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label>대출금액 (만원)</label>
+        <input type="number" class="form-control" id="st_amt" value="30000"/>
+      </div>
+      <div class="col-md-6">
+        <label>담보 종류</label>
+        <select class="form-select" id="st_type">
+          <option value="house">주택 (아파트·단독·다세대)</option>
+          <option value="nonhouse">비주택 (상가·토지·오피스텔)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-calc mt-4" onclick="calcStamp()">계산하기</button>
+    <div id="stamp-result" style="margin-top:20px;display:none"></div>
+  </div>
+</div>
